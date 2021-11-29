@@ -1,4 +1,6 @@
-# Bamboo 🎍
+# Bamboo Ed25519 Yasmf 🎍
+
+> A fork of [bamboo](https://github.com/AljoschaMeyer/bamboo) using [yasmf](https://github.com/bamboo-rs/yasmf-hash-spec) hashes instead
 
 A cryptographically secure, distributed, single-writer append-only log that supports transitive partial replication and local deletion of data.
 
@@ -38,10 +40,10 @@ Since signatures and hashes are computed over concrete bytes rather than abstrac
 -   `author`, the 32 bytes that make up the [ed25519](https://ed25519.cr.yp.to/) public key of the log's author
 - `log_id`, the 64 bit integer that serves to distinguish different logs by the same author, encoded as a canonical [VarU64](https://github.com/AljoschaMeyer/varu64)
 -   `seqnum`, the sequence number of the entry, encoded as a canonical [VarU64](https://github.com/AljoschaMeyer/varu64). Note that this limits the maximum size of logs to 2^64 - 1.
--   `lipmaalink`, the hash of an older log entry, encoded as a canonical, binary [yamf-hash](https://github.com/AljoschaMeyer/yamf-hash). For details on which entry the lipmaalink has to point to, see the next section. This is omitted if the `seqnum` is one, or if the seqnum is one more than the entry that would need to be hashed (including it would merely duplicate the `backlink` in this situation).
--   `backlink`, the hash of the previous log entry, encoded as a canonical, binary [yamf-hash](https://github.com/AljoschaMeyer/yamf-hash). This is omitted if the `seqnum` is one.
+-   `lipmaalink`, the hash of an older log entry, encoded as a canonical, binary [yasmf-hash](https://github.com/bamboo-rs/yasmf-hash-spec). For details on which entry the lipmaalink has to point to, see the next section. This is omitted if the `seqnum` is one, or if the seqnum is one more than the entry that would need to be hashed (including it would merely duplicate the `backlink` in this situation).
+-   `backlink`, the hash of the previous log entry, encoded as a canonical, binary [yasmf-hash](https://github.com/bamboo-rs/yasmf-hash-spec). This is omitted if the `seqnum` is one.
 -   `size`, the size of the payload, encoded as a canonical [VarU64](https://github.com/AljoschaMeyer/varu64).
--   `payload_hash`, the hash of the payload, encoded as a canonical, binary [yamf-hash](https://github.com/AljoschaMeyer/yamf-hash).
+-   `payload_hash`, the hash of the payload, encoded as a canonical, binary [yasmf-hash](https://github.com/bamboo-rs/yasmf-hash-spec).
 -   `sig`, the signature obtained from signing the previous data with the author's private key (64 bytes)
 
 Note that peers don't necessarily have to adhere to this encoding when persisting or exchanging data. In some cases, author, tag, seqnum, backlinks and payload_hash can be reconstructed without them having to be transmitted. This encoding is only binding for signature verification and hash computation, nothing more.
